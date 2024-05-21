@@ -1,9 +1,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Definitions of the script %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 clc;
 clear all;
 input_block = rand(1,128)>.3; %generate input_block_for_AES.
-key = rand(32,4)>.2; %initial value of key before expansion
+key = rand(4,32)>.2; %initial value of key before expansion
 Nr = 10; 
 Nb = size(input_block,2)/32; %%%%% number of words %%%%%
 state = zeros(32,Nb);
@@ -14,17 +14,21 @@ for i = 1:4
     j=j+32;
 end 
 
+hexa = binary_matrix_hexa(state')
+hexa = hexa';
+state = hexa_matrix_binary(hexa);
+
 %%%%%%%%%%%%%%%%%%% intial round %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 state = add_round_key(state,key);
 
 %%%%%%%%%%%%%%%%%%%%%%% Main rounds %%%%%%%%%%%%%%%%%%%%%%
 
-for i = 1:Nr-1
+% for i = 1:Nr-1
     sub_byte(state);
     shift_rows(state);
-    mix_columns(state);
-    add_round_key(state,key);
-end 
+   % mix_columns(state);
+   % add_round_key(state,key);
+% end 
 
 %%%%%%%%%%%%%%%%%%%%%% Final round
 
