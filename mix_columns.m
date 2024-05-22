@@ -1,50 +1,50 @@
 function state = mix_columns(input_state)
 %converting input binary matrix to hexadecimal%
-
+%%%%%%%%%%%% mix_columns takes input matrix as hexadecimal %%%%%%%%%%%%%%
 %%%%%%%%%%%%%% mix columns
-input_state = hex2dec(binary_matrix_hexa(input_state));
+input_state = hex2dec(input_state);
 
 Pre_fixed_reduction = [0 0 0 1 1 0 1 1]; 
 pre_defined_matrix = [ 2   3   1   1;
-                       1   2   3   2;
+                       1   2   3   1;
                        1   1   2   3;
                        3   1   1   2];
-column = 1;     
-for row=1:4
-        for element = 1:4
-            if pre_defined_matrix(row,element) == 1
-                result = decimalToBinaryVector(input_state(element,column)); %%%%% same as the input number %%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                    
-            elseif pre_defined_matrix(row,element) == 2
+column = 1;
+result = zeros(1,4);
+%%%%%%%%%%% looping on columns of the state matrix for matrix multiplications and rows of predefined matrix for multiply%%%%%%%%%%%%%%%%
+    for column = 1:4 %%%%%%%% looping on columns of the input state
+            for row=1:4  %%%%%%%%%%%%% looping on rows of the predefined matrix 
+                    for element = 1:4  %%%%%% looping on each byte in the predefined matrix to apply galoa field operations
+                            if pre_defined_matrix(row,element) == 1
+                                result(element) = input_state(element,column); %%%%% same as the input number %%%%
+                            elseif pre_defined_matrix(row,element) == 2
                     %%%%%%%%% 2 cases for the MSb of the binary equivelant of the input_state element%%
-                
-               extracted_binary = decimalToBinaryVector(input_state(element,column),8)
-               if(extracted_binary(1) == 0)
-                   extracted_binary = [extracted_binary(2:8) 0 ] ^ Pre_fixed_reduction;     
-               else 
-                   extracted_binary = [extracted_binary(2:8) 0 ];
-               end 
-               result = extracted_binary;
+                                extracted_binary = decimalToBinaryVector(input_state(element,column),8);
+                                if(extracted_binary(1) == 1)
+                                    extracted_binary = bitxor([extracted_binary(2:8) 0 ] ,Pre_fixed_reduction);     
+                                else 
+                                    extracted_binary = [extracted_binary(2:8) 0 ];
+                                end 
+                                result(element) = binaryVectorToDecimal(extracted_binary);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%            
-            elseif pre_defined_matrix(row,element) == 3
+                            elseif pre_defined_matrix(row,element) == 3
                     %%%%%%%%%%%%%%% multiply by 2 case then multiply by 1 then xor between them %%%%%% 
-               extracted_binary = decimalToBinaryVector(input_state(element,column),8)
-               if(extracted_binary(1) == 0)
-                   extracted_binary = [extracted_binary(2:8) 0 ] ^ Pre_fixed_reduction;     
-               else 
-                   extracted_binary = [extracted_binary(2:8) 0 ];
-               end 
-               
-               extracted_binary_2 = decimalToBinaryVector(input_state(element,column));
-               result = extracted_binary ^ extracted_binary_2; %final result in case of 3
+                               extracted_binary = decimalToBinaryVector(input_state(element,column),8);
+                               if(extracted_binary(1) == 1)
+                                    extracted_binary = bitxor([extracted_binary(2:8) 0 ] ,Pre_fixed_reduction);     
+                               else 
+                                    extracted_binary = [extracted_binary(2:8) 0 ];
+                               end  
+                               dec2hex(input_state(element,column))
+                               extracted_binary_2 = decimalToBinaryVector(input_state(element,column),8);
+                               result(element) = binaryVectorToDecimal(bitxor(extracted_binary,extracted_binary_2)); %final result in case of 3
+                            end     
+                        
+                    end 
+                    state(row,column) = bitxor(bitxor(result(1),result(2)),bitxor(result(3),result(4)));
             end 
-            
-            %%%%%%%%%%%%%%%%%%% output result calculations %%%%%%%%%%%%  
-            final_result = result ^ final_result;
-            state(row,column) = final_result;
-        end 
-        column = column+1;
-end 
 
-
+    end
+    
+ state = compose("%X",state);   
 end 

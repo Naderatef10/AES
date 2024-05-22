@@ -14,7 +14,7 @@ for i = 1:4
     j=j+32;
 end 
 
-hexa = binary_matrix_hexa(state')
+hexa = binary_matrix_hexa(state');
 hexa = hexa';
 state = hexa_matrix_binary(hexa);
 
@@ -24,9 +24,13 @@ state = add_round_key(state,key);
 %%%%%%%%%%%%%%%%%%%%%%% Main rounds %%%%%%%%%%%%%%%%%%%%%%
 
 % for i = 1:Nr-1
-    sub_byte(state);
-    shift_rows(state);
-   % mix_columns(state);
+    state = sub_byte(state);
+    state = shift_rows(state);
+    temp = ["87" "F2" "4D" "97";
+            "6E" "4C" "90" "EC";
+            "46" "E7" "4A" "C3";
+            "A6" "8C" "D8" "95"];
+    return_value = mix_columns(temp);
    % add_round_key(state,key);
 % end 
 
