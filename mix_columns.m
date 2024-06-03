@@ -2,6 +2,7 @@ function state = mix_columns(input_state)
 %converting input binary matrix to hexadecimal%
 %%%%%%%%%%%% mix_columns takes input matrix as hexadecimal %%%%%%%%%%%%%%
 %%%%%%%%%%%%%% mix columns
+input_state = binary_matrix_hexa(input_state);
 input_state = hex2dec(input_state);
 
 Pre_fixed_reduction = [0 0 0 1 1 0 1 1]; 
@@ -35,7 +36,7 @@ result = zeros(1,4);
                                else 
                                     extracted_binary = [extracted_binary(2:8) 0 ];
                                end  
-                               dec2hex(input_state(element,column))
+                               dec2hex(input_state(element,column));
                                extracted_binary_2 = decimalToBinaryVector(input_state(element,column),8);
                                result(element) = binaryVectorToDecimal(bitxor(extracted_binary,extracted_binary_2)); %final result in case of 3
                             end     
@@ -47,4 +48,5 @@ result = zeros(1,4);
     end
     
  state = compose("%X",state);   
+ state = hexa_matrix_binary(state);
 end 

@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Definitions of the script %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+function output_cipher = AES() 
 clc;
 clear all;
 input_block = rand(1,128)>.3; %generate input_block_for_AES.
@@ -17,23 +17,24 @@ end
 hexa = binary_matrix_hexa(state');
 hexa = hexa';
 state = hexa_matrix_binary(hexa);
-
 %%%%%%%%%%%%%%%%%%% intial round %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 state = add_round_key(state,key);
 
-%%%%%%%%%%%%%%%%%%%%%%% Main rounds %%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Main rounds %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% for i = 1:Nr-1
+ for i = 1:Nr-1
     state = sub_byte(state);
     state = shift_rows(state);
-    temp = ["87" "F2" "4D" "97";
-            "6E" "4C" "90" "EC";
-            "46" "E7" "4A" "C3";
-            "A6" "8C" "D8" "95"];
-    return_value = mix_columns(temp);
-   % add_round_key(state,key);
-% end 
+    state = mix_columns(state);
+    key = key_expansion(key,i);
+    state =add_round_key(state,key); 
+ end 
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Final round %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    state = sub_byte(state);
+    state =shift_rows(state);
+    key=key_expansion(key,i+1);
+    state = add_round_key(state,key);
 
-%%%%%%%%%%%%%%%%%%%%%% Final round
+output_cipher = binary_matrix_hexa(state);
 
-
+ end 

@@ -1,10 +1,6 @@
-%sub byte function is one of the four main algorithms in the AES-128 algorithms
-%in this model the function takes the input state matrix as binary and perform proper subsititution
-%based on the s_box table which is stated in the Fips standard
-%the function returns the state matrix in binary
-%inputs -> state matrix from previous step
-%outputs -> state matrix after substitution of bytes.
-function state = Sub_byte(input_state)
+%input_state in sub_word function is 4x1 decimal vector we need to change it to binary for proper 
+%operation then return it back to decimal.
+function state = sub_word(input_state)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% S_Box declaration %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 state=input_state;
 s_box =[
@@ -31,16 +27,24 @@ s_box =[
 j = 1;
 first_byte = [];
 second_byte = [];
+input_state_binary = ones(4,8);
+for i = 1:4
+    
+    input_state_binary(i,:) = decimalToBinaryVector(input_state(i),8);
+    
+end 
+
+
 %%%%%%%%%%%%%%% looping on each word in the 4 words of 128 bit input block %%%%%%%%
 for i = 1:4
     %%%%%%%% looping on 4 bytes in each word 
     j=1;
-  for byte = 1:4
+  for byte = 1:1
       %first_byte is converted to decimal to find the equivelance in the s_box,
       %the s_box used in the model is based on decimal literals so we need to convert from binary representation to decimal
       %this occurs in the first_byte,second_byte operations
-    first_byte = binaryVectorToDecimal(input_state(i,j:j+4-1)); %%%% extracting first byte %%%% 
-    second_byte = binaryVectorToDecimal(input_state(i,j+4:j+8-1)); %%%%%%%%%%% extracting second byte %%%%%%%%%
+    first_byte = binaryVectorToDecimal(input_state_binary(i,j:j+4-1)); %%%% extracting first byte %%%% 
+    second_byte = binaryVectorToDecimal(input_state_binary(i,j+4:j+8-1)); %%%%%%%%%%% extracting second byte %%%%%%%%%
     new_byte = s_box(first_byte+1,second_byte+1); %%%% extracting new byte from sbox%%%%
     new_byte = decimalToBinaryVector(new_byte,8); %%%% converting the new byte from decimal to binary
     state(i,j:j+4-1)= new_byte(1:4); %storing the new byte in binary representation as 8 bits (first 4 bits)
@@ -48,5 +52,11 @@ for i = 1:4
     j = j + 8;
   end 
 end 
-
+state_output = zeros(4,1);
+for i = 1:4
+    
+    state_output(i) = binaryVectorToDecimal(state(i,:));
+    
+end 
+state = state_output;
 end 
