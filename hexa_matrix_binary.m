@@ -1,4 +1,6 @@
 %function to transfor 4x4 hexadecimal matrix into 4x32 binary matrix
+% input input_state matrix 4x4 hexadecimal matrix
+% output 4x32 bits binary matrix
 function state_binary = hexa_matrix_binary(input_state)
 % input 4x4 hexa_decimal_matrix 
 input_state = hex2dec(input_state); %transforming the hexadecimal matrix to decimal
@@ -17,3 +19,4 @@ for i = 1:4
 end 
 
 end 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

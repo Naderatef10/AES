@@ -1,23 +1,14 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Definitions of the script %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function output_cipher = AES() 
-clc;
-clear all;
-input_block = rand(1,128)>.3; %generate input_block_for_AES.
-key = rand(4,32)>.2; %initial value of key before expansion
-Nr = 10; 
-Nb = size(input_block,2)/32; %%%%% number of words %%%%%
-state = zeros(32,Nb);
-%%%%%%%%%%%%%%%%% Transforming 128 bits into 4 words each of 32 bits matrix %%%%%%%%%
-j=0;
-for i = 1:4 
-    state(:,i)=input_block(1+j:32+j);
-    j=j+32;
-end 
+%%%%%%%%%%%%%%%%% AES function 
+%%%%%%%%%%%% inputs : 1)state matrix 4x32 bits
+%                     2)key matrix 4x32 bits
+%
+% outputs -> output_cipher 4x4 hexadecimal matrix
+% The AES function responsbile for 
+function output_cipher = AES(state,key) 
 
-hexa = binary_matrix_hexa(state');
-hexa = hexa';
-state = hexa_matrix_binary(hexa);
+Nr = 10; %%%%%%%%%% number of rounds required in AES-128 %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%% intial round %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% in initial round sub_byte,shift_rows,mix_columns are excluded and add_round_key is performed on the initial key, no need for expansion
 state = add_round_key(state,key);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Main rounds %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -30,11 +21,12 @@ state = add_round_key(state,key);
     state =add_round_key(state,key); 
  end 
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Final round %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %in final round no mix column operation is required.
     state = sub_byte(state);
     state =shift_rows(state);
     key=key_expansion(key,i+1);
     state = add_round_key(state,key);
-
+%transforming the binary output to hexa decimal format for better debugging and visualization 
 output_cipher = binary_matrix_hexa(state);
 
  end 
