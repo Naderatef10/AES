@@ -1,0 +1,4 @@
+vlog *.v
+vsim work.AES_tb -voptargs=+acc
+
+run -all
