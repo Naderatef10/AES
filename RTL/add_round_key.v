@@ -1,10 +1,11 @@
+/*module add_round_key used to implement add_round_key step in the AES algorithm*/
 module add_round_key (
 
     input wire clk,
     input wire rst, 
-    input wire enable_add_round_Key,
+    input wire enable_add_round_Key, /*used to enable the block, generated from the top level controller*/
 
-
+/*input 16 bytes from state matrix (text bytes)*/
     input wire [7:0] B0,
     input wire [7:0] B1,
     input wire [7:0] B2,
@@ -21,7 +22,7 @@ module add_round_key (
     input wire [7:0] B13,
     input wire [7:0] B14,
     input wire [7:0] B15,
-
+/*input 16 bytes keys*/
     input wire [7:0] K0,
     input wire [7:0] K1,
     input wire [7:0] K2,
@@ -79,6 +80,7 @@ module add_round_key (
             B15_new <= 0;
             
         end
+        /*if enabled perfrom simple xor operations*/
         else if (enable_add_round_Key)begin
             
             B0_new <= B0 ^ K0;

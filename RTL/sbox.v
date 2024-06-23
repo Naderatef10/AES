@@ -1,8 +1,14 @@
+/*Module Sbox used to substitute bytes of the state matrix based on a substitution matrix 
+obtained from the Fips standard
+
+the module is designed as pure combinational logic, using LUT approach this LUT will be used in sub_byte module
+*/
 module sbox (
     input wire [7:0] old_byte,
     output reg [7:0] new_byte
 );
 
+/*LUT implementation*/
 always @(*) begin
     
     case (old_byte)

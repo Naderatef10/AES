@@ -1,9 +1,16 @@
+/*shift_rows module used to implement the shift_rows step in the AES algorithm, 
+the module is enabled using enable_shift_rows signal from the top level controller,
+the bypass signal is used to buffer the module (the output is the same as input) which is necessary in the initial round as shift rows is not used
+
+*/
+
+
 module shift_rows (
     input wire clk,
     input wire rst, 
     input wire enable_shift_rows,
     input wire bypass,
-    input wire [7:0] B0,
+    input wire [7:0] B0, 
     input wire [7:0] B1,
     input wire [7:0] B2,
     input wire [7:0] B3,
@@ -38,9 +45,9 @@ module shift_rows (
     output reg [7:0] B14_new,
     output reg [7:0] B15_new
 );
-
+/*Logic*/
 always @(posedge clk , negedge rst) begin
-    
+    /*Asynchronous reset*/
         if(!rst)begin
 
             B0_new <= 0;
@@ -61,6 +68,7 @@ always @(posedge clk , negedge rst) begin
             B15_new <= 0;
             
         end
+        /*if the module is enabled will perform the shift_rows opeation*/
         else if (enable_shift_rows)begin
             
             /*****first row in the state matrix stays the same*********/
@@ -94,7 +102,7 @@ always @(posedge clk , negedge rst) begin
             B15_new <= B11;
 
         end
-
+    /*if bypass is performed the output bytes will be the same as input_bytes*/
         else if (bypass) begin
             
             B0_new <= B0; 

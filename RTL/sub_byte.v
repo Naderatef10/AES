@@ -1,8 +1,11 @@
+/*module sub_byte used to substitute each byte of the 16 bytes in the state matrix according to (sbox) module this is one of the 4 main 
+steps in the AES algorithm*/
 module sub_byte (
 
 input wire clk,rst,
 input wire bypass,
-input wire enable_sub_byte,
+input wire enable_sub_byte, /*enabled sub byte generated from top level controller*/
+/*input bytes*/
 input wire [7:0] B0,
 input wire [7:0] B1,
 input wire [7:0] B2,
@@ -19,7 +22,7 @@ input wire [7:0] B12,
 input wire [7:0] B13,
 input wire [7:0] B14,
 input wire [7:0] B15,
-
+/*output bytes*/
 output reg [7:0] B0_new,
 output reg [7:0] B1_new,
 output reg [7:0] B2_new,
@@ -39,6 +42,7 @@ output reg [7:0] B15_new
 
 );
 
+/*substituted bytes (outputs from the s_box modules)*/
 wire [7:0] s_box_b0;
 wire [7:0] s_box_b1;
 wire [7:0] s_box_b2;
@@ -74,7 +78,7 @@ sbox byte_13 (B13,s_box_b13);
 sbox byte_14 (B14,s_box_b14);
 sbox byte_15 (B15,s_box_b15);
 
-
+/*registering the output of the sbox module*/
 always @(posedge clk ,negedge rst) begin
         if(!rst)begin
 
@@ -116,7 +120,7 @@ always @(posedge clk ,negedge rst) begin
             B15_new <=s_box_b15;
    
         end
-
+        /*bypass signal needed in case of the initial round only add_round_key is performed*/
         else if (bypass)begin
     
             B0_new <= B0; 

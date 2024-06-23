@@ -1,3 +1,4 @@
+/*module used to divide the 128 bytes into 16 bytes (state matrix) as AES algorithm is performed at byte level*/
 module divide_bytes (
     input wire [127:0] plain_text,
     output wire [7:0] B0,
