@@ -1,14 +1,16 @@
+/*Top level module of the AES*/
 module AES (
     
-    input wire [127:0] plain_text,
-    input wire [127:0] key,
-    input wire input_valid,
+    input wire [127:0] plain_text, /*input plain text to the AES module*/
+    input wire [127:0] key,/*input initial key to the AES*/
+    input wire input_valid, /*input valid if asserted indicates valid plain_text and key*/
     input wire clk,
     input wire rst,
-    output wire [127:0] cipher_text,
-    output wire output_valid
+    output wire [127:0] cipher_text, /*output cipher text valid only upon the assertion of the output_valid*/
+    output wire output_valid /*output valid if asserted indicates the completion of the encryption process high only for 1 clock cycle*/
 
 );
+/********************************************************************* Intermediate signals *************************************************/
 
 wire [7:0] B0_input;
 wire [7:0] B1_input;
@@ -82,15 +84,6 @@ wire [7:0] B14_output_mix_columns;
 wire [7:0] B15_output_mix_columns;
 
 
-
-
-
-
-
-
-
-
-
 wire [7:0] B0_input_shift_rows;
 wire [7:0] B1_input_shift_rows;
 wire [7:0] B2_input_shift_rows; 
@@ -107,15 +100,6 @@ wire [7:0] B12_input_shift_rows;
 wire [7:0] B13_input_shift_rows;
 wire [7:0] B14_input_shift_rows;
 wire [7:0] B15_input_shift_rows;
-
-
-
-
-
-
-
-
-
 
 
 wire [7:0] B0_add_round_key_out;
@@ -155,9 +139,6 @@ wire [7:0] K15_expansion_out;
 
 
 
-
-
-
 wire [127:0] mux_out_add_round_key;
 wire [127:0] mix_columns_merged;
 wire initial_round_flag;
@@ -169,11 +150,16 @@ wire bypass;
 wire[127:0] output_mux_pre_expansion;
 wire enable_counter_top;
 wire soft_rst_top;
-
 wire [3:0] round_counter_top;
 wire enable_key_expansion;
 wire [127:0] key_expansion_merged;
-/*mux before add_round_Key*/
+
+/*******************************************End of intermediate signals **********************************************************************/
+
+
+/*mux before add_round_Key multiplixing between the 128 bits output of the mix_columns and the input plain text to the design
+if the initial_round_flag is equal to 1 the plain text is used else 0 in the main rounds the outputs of the mix_column is feeded to the 
+add_round key*/
 mux_2x1 mux_pre_add_round (
 .in1(mix_columns_merged),
 .in2(plain_text),
@@ -182,7 +168,7 @@ mux_2x1 mux_pre_add_round (
 );
 
 
-/*input of add_round_key output of the mux before add_round_key*/
+/*input of add_round_key output of the mux before add_round_key the mux selects between the output of the mix_columns and the input plain text*/
 divide_bytes divide_input(
 .plain_text(mux_out_add_round_key),
 .B0(B0_input),
@@ -203,7 +189,7 @@ divide_bytes divide_input(
 .B15(B15_input)
 
 );
-
+/*add_round_key instant*/
 add_round_key add_round_key_instant (
 .clk(clk),
 .rst(rst), 
@@ -257,7 +243,7 @@ add_round_key add_round_key_instant (
 .B14_new(B14_add_round_key_out),
 .B15_new(B15_add_round_key_out)
 );
-
+/*merging the output bytes of the add_round_key into single 128 bits output to be considered as the output of the design*/
 merge_bytes output_cipher_merge(
 .B0(B0_add_round_key_out),
 .B1(B1_add_round_key_out),
@@ -280,7 +266,7 @@ merge_bytes output_cipher_merge(
 
 );
 
-
+/*sub_bytes instant*/
 sub_byte sub_byte_instance(
 .clk(clk),
 .rst(rst),
@@ -320,6 +306,7 @@ sub_byte sub_byte_instance(
 .B15_new(B15_input_shift_rows)
 );
 
+/*shift_rows instant*/
 shift_rows shift_rows_instant(
 .clk(clk),
 .rst(rst),
@@ -360,7 +347,7 @@ shift_rows shift_rows_instant(
 
 );
 
-
+/*mix_columns instant*/
 mix_columns mix_columns_instant(
 .clk(clk),
 .rst(rst),
@@ -400,7 +387,8 @@ mix_columns mix_columns_instant(
 .B15_new(B15_output_mix_columns)
 
 );
-
+/*merging the output bytes of the mix_columns to 128 bits to be muxed with the input plain text (original text) during the initial round
+if the initial_round_flag is equal to 1 input text will be used else if it is zero the output of the mix_columns will be used */
 merge_bytes merge_bytes_post_mix_columns(
 .B0(B0_output_mix_columns),
 .B1(B1_output_mix_columns),
@@ -423,7 +411,8 @@ merge_bytes merge_bytes_post_mix_columns(
 );
 
 
-
+/*merging output bytes into a single 128 bit signal key_expansion_merged to be an input to the mux before key expansion module
+to be muxed according to initial_round_flag*/
 merge_bytes merge_bytes_pre_key_expansion(
 .B0(K0_expansion_out),
 .B1(K1_expansion_out),
@@ -448,14 +437,16 @@ merge_bytes merge_bytes_pre_key_expansion(
 
 /*when initial round is activated enter the original key when 1 the input key will be used else when 0 the output of the previous round will be used*/
 mux_2x1 pre_key_expansion_instant(
-.in1(key_expansion_merged),
+.in1(key_expansion_merged), /*key expansion merged is the output of the key expansion module but after merging the 16 bytes into single 128 bit signal*/
 .in2(key),
 .mux_sel(initial_round_flag),
-.out(output_mux_pre_expansion)
+.out(output_mux_pre_expansion) /*output of the mux to be later divided using the divide_input_pre_key_expansion instance to divide into 16 bytes 
+for key expansion module to operate correctly*/
 
 
 );
 
+/*dividing the output of the mux before the key expansion module from 128 bits to 16 bytes for proper operations of the modules*/
 divide_bytes divide_input_pre_key_expansion(
 .plain_text(output_mux_pre_expansion),
 .B0(K0_input),
@@ -477,6 +468,7 @@ divide_bytes divide_input_pre_key_expansion(
 
 );
 
+/*key expansion instance*/
 key_expansion key_expansion_instant(
 .clk(clk),
 .rst(rst), 
@@ -518,7 +510,7 @@ key_expansion key_expansion_instant(
 
 );
 
-
+/*round_counter*/
 counter round_counter_instant(
 .clk(clk),
 .rst(rst),
@@ -530,6 +522,7 @@ counter round_counter_instant(
 );
 
 
+/*FSM controller*/
 controller Top_controller (
 
 .clk(clk),
