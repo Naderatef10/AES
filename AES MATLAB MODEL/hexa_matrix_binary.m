@@ -4,6 +4,7 @@
 function state_binary = hexa_matrix_binary(input_state)
 % input 4x4 hexa_decimal_matrix 
 input_state = hex2dec(input_state); %transforming the hexadecimal matrix to decimal
+
 state_binary = zeros(4,32);
 j=1;
 %loop on each row of bytes

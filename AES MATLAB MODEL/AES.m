@@ -5,7 +5,9 @@
 % outputs -> output_cipher 4x4 hexadecimal matrix
 % The AES function responsbile for 
 function output_cipher = AES(state,key) 
-
+state = hexa_matrix_binary(state);
+key = hexa_matrix_binary(key);
+% state = hexa_matrix_binary(state);
 Nr = 10; %%%%%%%%%% number of rounds required in AES-128 %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%% intial round %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % in initial round sub_byte,shift_rows,mix_columns are excluded and add_round_key is performed on the initial key, no need for expansion
