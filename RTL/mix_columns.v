@@ -203,37 +203,37 @@ to produce the new column of the state matrix then move to the next column in th
 
 */
 /*in case the byte is multiplied by 3 in the pre_defined_matrix the result is multiply_2 multiplied the byte it self*/
-function [7:0] multiply_3 (input [7:0] byte);
+function [7:0] multiply_3 (input [7:0] input_byte);
      reg [7:0] result_multiply_2;
      begin
      
-     multiply_3 = multiply_2(byte) ^ byte;
+     multiply_3 = multiply_2(input_byte) ^ input_byte;
 
      end
 
 endfunction
 
 /*multiply by 2 depends on the MSb of the byte to be multiplied*/
-function [7:0] multiply_2 (input [7:0] byte);
+function [7:0] multiply_2 (input [7:0] input_byte);
     
     begin 
         /*if the MSb is 1 then we will shift left by 1 then xor with the pre_fixed_reduction byte stated in the fips standard*/
-    if (byte[7]) begin
-        multiply_2 = (byte << 1) ^ pre_fixed_reduction;
+    if (input_byte[7]) begin
+        multiply_2 = (input_byte << 1) ^ pre_fixed_reduction;
     end
     else begin /*if the MSb is equal to zero we will just shift left*/
-        multiply_2 = (byte << 1);
+        multiply_2 = (input_byte << 1);
     end
 
     end 
     
 endfunction
 /*mutliply_1 return the byte as it is*/
-function [7:0] multiply_1 (input [7:0] byte);
+function [7:0] multiply_1 (input [7:0] input_byte);
     
     begin
         
-        multiply_1 = byte; 
+        multiply_1 = input_byte; 
 
     end
 

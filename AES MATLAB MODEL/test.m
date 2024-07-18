@@ -22,7 +22,7 @@ for i = 1:100
   input_key = hexMatrix(test_cases_keys(i));
   output_cipher = AES(input_cipher,input_key);
   output_cipher = Matrix_to_hex_string(output_cipher);
-  fprintf(fileID_3, '%s\n',output_cipher) ;
+  fprintf(fileID_3, '%s\n',lower(output_cipher)) ;
  
 end 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
