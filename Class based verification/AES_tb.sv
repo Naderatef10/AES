@@ -16,6 +16,9 @@
 `include "sequencer.sv"
 `include "env.sv"
 `include "interface.sv"
+`include "AES_assertions.sv"
+
+
 
 module AES_tb ();
 
@@ -31,6 +34,23 @@ assign intf1.clk = clk_tb;
 assign intf1.rst = rst_tb;
 AES_interface intf1 ();
 env top_level_env;
+
+
+bind  DUT AES_assertions embedded_assertions(
+
+.output_valid(output_valid),
+.clk(clk),
+.input_valid(input_valid),
+.round_counter(round_counter_top),
+.enable_add_round_key(enable_add_round_Key),
+.enable_key_expansion(enable_key_expansion),
+.enable_shift_rows(enable_shift_rows),
+.enable_sub_bytes(enable_sub_bytes),
+.rst(rst),
+.current_state(DUT.Top_controller.current_state)
+
+);
+
 
 AES DUT (
 .plain_text(intf1.plain_text), 
