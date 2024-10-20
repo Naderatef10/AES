@@ -30,7 +30,8 @@ task run_phase(uvm_phase phase);
             #1 
                 item_1.cipher_text = monitor_interface.cipher_text;
                 item_1.output_valid = monitor_interface.output_valid;
-
+                item_1.rst = monitor_interface.rst;
+                item_1.input_valid = monitor_interface.rst;                 
                 monitor_analysis_port.write(item_1);
 
         end

@@ -16,7 +16,7 @@ function new(string name = "AES_sequence");
 task body ();
 
 
-/* start_item(seq_item_instant);
+ start_item(seq_item_instant);
 
 seq_item_instant.rst = 0;
 seq_item_instant.input_valid = 0;
@@ -25,33 +25,41 @@ seq_item_instant.input_valid = 0;
 finish_item(seq_item_instant);
 
 
-#50; // 5 cycles;
-
-start_item(seq_item_instant);
-
-seq_item_instant.rst = 0;
-seq_item_instant.input_valid = 1;
-
-
-finish_item(seq_item_instant);
-
-#10; // cycle delay;
-
-start_item(seq_item_instant);
-
-seq_item_instant.rst = 0;
-seq_item_instant.input_valid = 0;
-
-
-finish_item(seq_item_instant);
+#20; // 5 cycles;
 
 start_item(seq_item_instant);
 
 seq_item_instant.rst = 1;
-seq_item_instant.input_valid = 1;
-seq_item_instant.randomize();
+seq_item_instant.input_valid = 0;
 
-finish_item(seq_item_instant); */
+
+finish_item(seq_item_instant);
+
+
+
+for(int i = 0 ; i < 200 ; i++)begin
+
+start_item(seq_item_instant);
+
+seq_item_instant.input_valid = 1;
+void'(seq_item_instant.randomize());
+
+finish_item(seq_item_instant); 
+
+start_item(seq_item_instant);
+
+seq_item_instant.input_valid = 0;
+
+
+finish_item(seq_item_instant); 
+
+
+
+end
+
+
+
+
 
 
 endtask 

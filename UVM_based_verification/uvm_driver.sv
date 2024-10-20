@@ -23,6 +23,30 @@ endfunction
 
 task run_phase(uvm_phase phase);
 
+seq_item_port.get_next_item(seq_item_instant);
+
+    @(posedge local_interface.clk)begin    
+
+    local_interface.rst = seq_item_instant.rst;
+
+    
+    end 
+
+#1 seq_item_port.item_done();
+
+
+seq_item_port.get_next_item(seq_item_instant);
+
+    @(posedge local_interface.clk)begin    
+
+    local_interface.rst = seq_item_instant.rst;
+
+    
+    end 
+
+#1 seq_item_port.item_done();
+
+
 forever begin
     
 
@@ -33,12 +57,25 @@ seq_item_port.get_next_item(seq_item_instant);
     local_interface.rst = seq_item_instant.rst;
     local_interface.input_valid = seq_item_instant.input_valid;
     local_interface.plain_text = seq_item_instant.plain_text;
+    local_interface.key = seq_item_instant.key;
     
     end 
 
-    @(posedge local_interface.clk)begin
-    local_interface.input_valid = 0;
-    end
+#1 seq_item_port.item_done();
+
+
+seq_item_port.get_next_item(seq_item_instant);
+
+    @(posedge local_interface.clk)begin    
+
+    
+    local_interface.input_valid = seq_item_instant.input_valid;
+        
+    end 
+
+@(posedge local_interface.output_valid);
+//@(posedge local_interface.clk);
+
 #1 seq_item_port.item_done();
 
 end
