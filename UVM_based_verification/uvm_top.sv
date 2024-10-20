@@ -22,6 +22,7 @@ import uvm_pkg::*;
 `include "uvm_scoreboard.sv"
 `include "uvm_subscriber.sv"
 `include "uvm_env.sv"
+`include "uvm_sequence.sv"
 `include "uvm_test.sv"
 `include "interface.sv"
 
@@ -31,6 +32,21 @@ logic clk_generator;
 
 AES_interface AES_interface_instant (clk_generator);  
 virtual AES_interface virtual_interface;
+
+
+AES DUT (
+.plain_text(AES_interface_instant.plain_text), 
+.key(AES_interface_instant.key),
+.input_valid(AES_interface_instant.input_valid),  
+.clk(AES_interface_instant.clk),
+.rst(AES_interface_instant.rst),
+.cipher_text(AES_interface_instant.cipher_text),
+.output_valid(AES_interface_instant.output_valid)
+
+);
+
+
+
 
 always #5 clk_generator = ~clk_generator;
 

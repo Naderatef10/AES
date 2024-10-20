@@ -14,11 +14,21 @@ agent_instance = AES_agent::type_id::create("agent_instance",this);
 scoreboard_instance = AES_scoreboard::type_id::create("scoreboard_instance",this);
 subscriber_instance = AES_subscriber::type_id::create("subscriber_instance",this);
 if(!uvm_config_db # (virtual AES_interface)::get (this,"","local_interface",local_interface))begin
-    `uvm_fatel(get_full_name(),"!error")
+    `uvm_fatal(get_full_name(),"!error");
 end
 
-uvm_config_db #(virtual AES_interface)::set (this,"AES_agent","local_interface",local_interface);
+uvm_config_db #(virtual AES_interface)::set (this,"agent_instance","local_interface",local_interface);
 
 
 endfunction
+
+function  void connect_phase (uvm_phase phase);
+
+super.connect_phase(phase);
+agent_instance.agent_analysis_port.connect(subscriber_instance.analysis_export);
+agent_instance.agent_analysis_port.connect(scoreboard_instance.scoreboard_analysis_export);
+endfunction
+
+
+
 endclass // extends superClass
